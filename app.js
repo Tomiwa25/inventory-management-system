@@ -9,10 +9,14 @@ connectDB(); // Connect to MongoDB
 
 const app = express();
 const productRoutes = require('./Routes/ProductRoute');
+const userRoutes = require('./Routes/UserRoutes');
 
 
 app.use(express.json()); // Middleware to parse JSON request bodies
+
+
 app.use('/products', productRoutes); // Use the product routes
+app.use('/users', userRoutes); // Use the user routes
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
