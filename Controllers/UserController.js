@@ -30,7 +30,7 @@ exports.createUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         
         //create the user
-        const user = newUser({ name: req.body.name, email: req.body.email, password: hashedPassword, gender: req.body.gender, phone: req.body.phone, role: req.body.role, hasAdminAccess: req.body.hasAdminAccess });
+        const user = new User({ name: req.body.name, email: req.body.email, password: hashedPassword, gender: req.body.gender, phone: req.body.phone, role: req.body.role, hasAdminAccess: req.body.hasAdminAccess });
         await user.save();
         res.status(201).json({ message: 'User created successfully', user });
     } catch (error) {
