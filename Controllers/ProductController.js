@@ -1,4 +1,5 @@
 const Product = require('../Models/Product');
+const upload = require('../Config/UploadConfig'); // Import the upload configuration
 
 //Create a new product
 exports.createProduct = async (req, res) => {
@@ -7,6 +8,8 @@ exports.createProduct = async (req, res) => {
             return res.status(400).json({ message: 'All fields are required' });
         }
         const { name, size, description, price, quantity  } = req.body;
+
+        console.log(req.body); // Log the request body to the console for debugging
         const product = new Product({ name, size, description, price, quantity });
         await product.save();
         res.status(201).json(product);
@@ -14,6 +17,34 @@ exports.createProduct = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+//Create a new product with image
+exports.createProductWithImage = async (req, res) => {
+    try {
+        upload.single('image')(req, res, async (err) => {
+            if (err) {
+                return res.status(400).json({ message: err.message });
+            }
+
+            // Validate fields after upload middleware processes request
+            if (!req.body.name || !req.body.size || !req.body.description || !req.body.price || !req.body.quantity) {
+                return res.status(400).json({ message: 'All fields are required' });
+            }
+
+            if (!req.file) {
+                return res.status(400).json({ message: 'Image file is required' });
+            }
+
+            const { name, size, description, price, quantity } = req.body;
+            const product = new Product({ name, size, description, price, quantity, image: req.file.path });
+            await product.save();
+            res.status(201).json(product);
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 
 //update a product
 exports.updateProduct = async (req, res) => {
@@ -37,9 +68,6 @@ exports.updateProduct = async (req, res) => {
 //Get all products
 exports.getAllProducts = async (req, res) => {
     try {
-        if (!req.body) {
-            return res.status(400).json({ message: 'Request body is required' });
-        }
         const products = await Product.find();
         res.status(200).json({ message: 'Products retrieved successfully', products });
     } catch (error) {
