@@ -26,7 +26,7 @@ exports.createUser = async (req, res) => {
         }
 
         //encrypt the password before saving
-        const salt = await bcrypt.genSalt(10);
+        const salt = await bcrypt.genSalt(2);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         
         //create the user
@@ -62,7 +62,7 @@ exports.loginUser = async (req, res) => {
 
         //generate token
         const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ message: 'Login successful', token, user });
+        res.status(200).json({ message: 'Login successful', token, role: user.role });
     }  catch (error) {
         res.status(400).json({ message: error.message });
     }
