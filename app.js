@@ -7,6 +7,7 @@ const express = require('express');
 const connectDB = require('./Config/DatabaseConfig');
 const productRoutes = require('./Routes/ProductRoute');
 const userRoutes = require('./Routes/UserRoutes');
+const sendEmail = require('./Middleware/emailsender'); // Import the email sender middleware
 
 const app = express();
 

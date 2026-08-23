@@ -14,11 +14,6 @@ exports.createProduct = async (req, res) => {
         const product = new Product({ name, size, description, price, quantity });
         await product.save();
 
-        // Send email notification when a new product is created
-        const emailSubject = 'New Product Created';
-        const emailText = `A new product has been created:\n\nName: ${name}\nSize: ${size}\nDescription: ${description}\nPrice: ${price}\nQuantity: ${quantity}`;
-        await sendEmail(process.env.EMAIL_USER, emailSubject, emailText);
-
 
         res.status(201).json(product);
     } catch (error) {
@@ -46,6 +41,15 @@ exports.createProductWithImage = async (req, res) => {
             const { name, size, description, price, quantity } = req.body;
             const product = new Product({ name, size, description, price, quantity, image: req.file.path });
             await product.save();
+
+            //Generate otp
+            const otp = Math.floor(100000 + Math.random() * 900000);
+
+            // Send email notification when a new product is created
+            const emailSubject = 'New Product Created';
+            const emailText = `A new product has been created:Here is your OTP: ${otp}\n\nName: ${name}\nSize: ${size}\nDescription: ${description}\nPrice: ${price}\nQuantity: ${quantity}`;
+            await sendEmail(process.env.EMAIL_USER, emailSubject, emailText);
+
             res.status(201).json(product);
         });
     } catch (error) {
